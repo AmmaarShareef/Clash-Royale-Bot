@@ -1,2 +1,30 @@
 Follow these steps to push files to repo
 
+First time:
+    git init
+    git add .
+    git commit -m "Initial commit"
+    git branch -M main
+    git remote add origin https://github.com/<YOUR_USERNAME>/<YOUR_REPO_NAME>.git
+    git push -u origin main
+
+
+Regular:
+    git add .
+    git commit -m "Describe what you changed"
+    git push
+
+GitHub is ahead (you see “non-fast-forward” or “fetch first”):
+    git pull origin main --rebase
+    git push
+
+Authentication:
+    git config --global user.name "YourGitHubUsername"
+    git config --global user.email "youremail@example.com"
+
+Extra:
+    git branch          # shows current branch
+    git status          # shows changes, staged files, etc.
+    git log --oneline   # compact view of commit history
+    git remote -v       # confirms your GitHub link
+    git diff            # shows what changed before committing
