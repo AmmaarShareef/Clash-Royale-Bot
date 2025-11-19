@@ -1,10 +1,8 @@
 minipekka
 fireball
-itower
-hogrider
-skarmy
 musk
 giant
-arrows
 minions
 knight
+archers
+goblins
