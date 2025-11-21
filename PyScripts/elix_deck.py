@@ -1,6 +1,7 @@
 # elix_deck.py
 
 import time, keyboard, json
+import os
 
 # Time
 last_time = time.perf_counter()
@@ -11,7 +12,7 @@ sec_elapsed = 0
 game_run = True
 
 # Elixir
-opp_elixir = 8 # Starting elixir every match
+opp_elixir = 10 # Starting elixir every match
 elx_gen_time = 2.8 # 1 elixir per 2.8s
 last_elix = 0 # To avoid multiple prints of current elixir
 to_sub = 0 # Elixir Cost
@@ -22,12 +23,21 @@ possible4 = [] # The next possible card (one of these 4)
 curr_hand = [] # Current usable deck of 4
 last_card = ""
 
-def subElix(event):
+def subElix():
     global opp_elixir
     if opp_elixir >= to_sub:
         opp_elixir -= to_sub 
         
-keyboard.on_release_key("space", subElix)
+#keyboard.on_release_key("space", subElix)
+
+tmp = "Card_State.txt.tmp"
+final = "Card_State.txt"
+
+# Clean card_state by writing to a temporary file
+with open(tmp, "w") as f:
+    f.write(json.dumps({"card": "nocard", "e_cost": 0 }))
+    
+os.replace(tmp, final) # Atomic move, txt file is never empty, using os its state instantly updated.
 
 while game_run:
     
@@ -42,7 +52,7 @@ while game_run:
     # Print Control
     curr_elix = int(opp_elixir)
     if curr_elix != last_elix:
-        print(curr_elix)
+        print(curr_elix, opp_deck)
         last_elix = curr_elix
     
     # Read Card Detection File and collect JSON object
@@ -52,8 +62,10 @@ while game_run:
         if card != last_card:
             # Sub elixir 
             to_sub = info["e_cost"]
-            # Add placed card to opp_deck if not already there    
-            opp_deck.append(card)
+            subElix()
+            # Add placed card to opp_deck if not already there
+            if card not in opp_deck:
+                opp_deck.append(card)
             last_card = card
 
     

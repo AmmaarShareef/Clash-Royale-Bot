@@ -6,6 +6,7 @@ from ultralytics import YOLO
 model = YOLO("runs/detect/train2/weights/best.pt")
 
 # Run inference on a test image
-results = model("test14.png")  # results is a list of Results objects
+results = model("test/test6.png")  # results is a list of Results objects
 
-results.show()  # now works
+for box in results[0].boxes:
+    print(int(box.cls))

@@ -1,6 +1,6 @@
 # card_det.py
 
-import json, random, time
+import json, random, time, os
 
 import cv2
 import numpy as np
@@ -9,6 +9,28 @@ import mss
 from ultralytics import YOLO
 
 model = YOLO("runs/detect/train2/weights/best.pt")
+
+elix = 0
+card_indx = 0
+last_card = 0
+cls_id = 0
+
+cards_played = 0
+frame_val = 0
+
+cards = [
+  { "card": "minipekka",        "e_cost": 4 },
+  { "card": "fireball",        "e_cost": 4 },
+  { "card": "musk",         "e_cost": 4 },
+  { "card": "giant",            "e_cost": 5 },
+  { "card": "minions",          "e_cost": 3 },
+  { "card": "knight",      "e_cost": 3 },
+  { "card": "archers",       "e_cost": 3 },
+  { "card": "goblins",             "e_cost": 2 }
+]
+
+tmp = "Card_State.txt.tmp"
+final = "Card_State.txt"
 
 with mss.mss() as sct:
     monitor = {"top": 0, "left": 832, "width": 860, "height": 1600}
@@ -24,37 +46,27 @@ with mss.mss() as sct:
         
         cv2.imshow("Detection preview", annotated)
         
+        # Getting class id (index) from boxes, an array returned from results[0]
+        boxes = results[0].boxes
+        
+        if len(boxes) > 0:
+            best_idx = int(boxes.conf.argmax()) # returns class index (in boxes) with highest confidence
+            if float(boxes[best_idx].conf) > 0.65: # if confidence score above 70% then select
+                cls_id = int(boxes[best_idx].cls) # use class id with highest confidence
+        
+        if last_card == cls_id:
+            frame_val += 1
+        else:
+            frame_val = 0
+        last_card = cls_id
+        
+        if frame_val >= 30: # if card has been detected consistently for more than 30 frames
+            # Use results to pass detected card JSON to card_state
+            with open(tmp, "w") as f:
+                f.write(json.dumps(cards[cls_id]))
+            os.replace(tmp, final)
+        
         # Press "q" to quit
         if cv2.waitKey(25) & 0xFF == ord("q"):
             cv2.destroyAllWindows()
             break
-        
-'''
-elix = 0
-
-card_indx = 0
-cards_played = 0
-cards = [
-  { "card": "Skeletons",        "e_cost": 1 },
-  { "card": "Berserker",        "e_cost": 2 },
-  { "card": "Musketeer",         "e_cost": 3 },
-  { "card": "Fireball",            "e_cost": 4 },
-  { "card": "Wizard",          "e_cost": 5 },
-  { "card": "Royal Giant",      "e_cost": 6 },
-  { "card": "Mega Knight",       "e_cost": 7 },
-  { "card": "Golem",             "e_cost": 8 }
-]
-
-model = YOLO("yolov8n.pt")  # loads a small pretrained model
-model.info() # prints model details
-
-while True:
-    card_indx = random.randint(0, len(cards)-1)
-    cards_played += 1
-    
-    with open("Card_State.txt", "w") as f:
-        f.write(json.dumps(cards[card_indx]))
-    
-    # So it doesnt just keep updating card state rapidly
-    time.sleep(5) #cards[card_indx]["e_cost"] / 2
-'''
