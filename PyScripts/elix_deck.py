@@ -72,4 +72,4 @@ def reader(q, shared_state):
         shared_state["next_cards"] = next_cards
 
 
-        time.sleep(0.1) # Reducing CPU load by limiting loop to 10 times / second
+        time.sleep(0.01) # Reducing CPU load by limiting loop to 1 times / second
