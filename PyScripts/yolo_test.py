@@ -9,4 +9,4 @@ model = YOLO("runs/detect/train2/weights/best.pt")
 results = model("test/test6.png")  # results is a list of Results objects
 
 for box in results[0].boxes:
-    print(int(box.cls))
+    print(box)

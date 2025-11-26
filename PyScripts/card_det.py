@@ -29,8 +29,10 @@ cards = [
   { "card": "goblins",             "e_cost": 2 }
 ]
 
-def writer(q): #everything needs to run inside this so amain.py can run this entire processw
-    global last_card, frame_val, cls_id
+on_field = []
+
+def writer(q, shared_state): #everything needs to run inside this so amain.py can run this entire processw
+    global last_card, frame_val, cls_id, on_field
     
     with mss.mss() as sct:
         monitor = {"top": 0, "left": 832, "width": 860, "height": 1600}
@@ -51,7 +53,7 @@ def writer(q): #everything needs to run inside this so amain.py can run this ent
 
             if len(boxes) > 0:
                 best_idx = int(boxes.conf.argmax()) # returns class index (in boxes) with highest confidence
-                if float(boxes[best_idx].conf) > 0.65: # if confidence score above 70% then select
+                if float(boxes[best_idx].conf) > 0.35: # if confidence score above 30% then select
                     cls_id = int(boxes[best_idx].cls) # use class id with highest confidence
 
             if last_card == cls_id:
@@ -60,7 +62,7 @@ def writer(q): #everything needs to run inside this so amain.py can run this ent
                 frame_val = 0
             last_card = cls_id
 
-            if frame_val >= 60: # if card has been detected consistently for more than 30 frames
+            if frame_val >= 20: # if card has been detected consistently for more than 10 frames
                 q.put(cards[cls_id])
 
             # Press "q" to quit

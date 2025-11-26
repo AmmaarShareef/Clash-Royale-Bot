@@ -1,7 +1,7 @@
 # elix_deck.py
 
-import time, keyboard, json
-import os
+import time
+from collections import Counter
 
 # Time
 last_time = time.perf_counter()
@@ -19,8 +19,8 @@ to_sub = 0 # Elixir Cost
 
 # Deck
 opp_deck = [] # Full 8 card deck
-possible4 = [] # The next possible card (one of these 4)
 curr_hand = [] # Current usable deck of 4
+next_cards = [" ", " ", " ", " "] # The next possible card (one of these 4)
 last_card = ""
 
 def subElix(cost):
@@ -28,8 +28,8 @@ def subElix(cost):
     if opp_elixir >= cost:
         opp_elixir -= cost
         
-def reader(q):
-    global last_time, last_elix, opp_elixir, last_card
+def reader(q, shared_state):
+    global last_time, last_elix, opp_elixir, last_card, next_cards, curr_hand, opp_deck
     item = {"card": "nocard", "e_cost": 0}  # default
     
     while game_run:
@@ -58,10 +58,18 @@ def reader(q):
             # Sub elixir 
             to_sub = item["e_cost"]
             subElix(to_sub)
+            # Add to next card, will come back after 3 cycles
+            next_cards.pop(0)
+            next_cards.append(card)
             # Add placed card to opp_deck if not already there
             if card not in opp_deck and card != "nocard":
                 opp_deck.append(card)
             last_card = card
+            curr_hand = list((Counter(opp_deck) - Counter(next_cards)).elements()) # Whatever isnt in next_cards is in the curr_hand
+            
+        shared_state["opp_elixir"] = int(opp_elixir)
+        shared_state["curr_hand"] = curr_hand
+        shared_state["next_cards"] = next_cards
 
 
         time.sleep(0.1) # Reducing CPU load by limiting loop to 10 times / second
