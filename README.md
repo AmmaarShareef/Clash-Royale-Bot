@@ -9,8 +9,8 @@ Not really a full-fledged bot — just a simple helper that displays opponent el
 
 **Constraints:**
 
-* Only trains 8 classes for now
-* User's deck cannot contain duplicates from opponent’s
+* Only trained 8 classes for now
+* The user's deck cannot contain duplicates from the opponent
 * Distinct and specific cards only
 
 A **research-only experiment** for real-time card detection and elixir estimation.
