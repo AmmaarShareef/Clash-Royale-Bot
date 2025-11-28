@@ -1,4 +1,7 @@
+<img width="2055" height="1522" alt="Screenshot 2025-11-27 221320" src="https://github.com/user-attachments/assets/3a65f982-e69e-4046-a7de-971619473d65" />
+
 ---
+
 
 # **Clash-Royale-Bot**
 
