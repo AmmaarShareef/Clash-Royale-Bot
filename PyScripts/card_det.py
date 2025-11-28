@@ -44,9 +44,9 @@ def writer(q, shared_state): #everything needs to run inside this so amain.py ca
             img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR) # convert to RGB for YOLOv8
 
             results = model(img, verbose=False)
-            #annotated = results[0].plot()
+            annotated = results[0].plot()
 
-            #cv2.imshow("Detection preview", annotated)
+            cv2.imshow("Detection preview", annotated)
 
             # Getting class id (index) from boxes, an array returned from results[0]
             boxes = results[0].boxes

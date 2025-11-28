@@ -48,7 +48,7 @@ def reader(q, shared_state):
         # Print Control
         curr_elix = int(opp_elixir)
         if curr_elix != last_elix:
-            print(curr_elix)
+            #print(curr_elix), commented to optimise runtime
             last_elix = curr_elix
 
         card = item.get("card")    
